@@ -1,66 +1,39 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 
-struct Node{
-    int data;
-    struct Node *next;
-} *first = NULL;
-
-void create(int A[], int n){
-    int i;
-    struct Node *t, *last;
-    first = (struct Node *)malloc(sizeof(struct Node));
-    first->data = A[0];
-    first->next = NULL;
-    last = first;
-    for (i = 1; i < n; i++){
-        t = (struct Node *)malloc(sizeof(struct Node));
-        t->data = A[i];
-        t->next = NULL;
-        last->next = t;
-        last = t;
+using namespace std;
+ 
+template <class T>
+void Print(T& vec, int n, string s){
+    cout << s << ": [" << flush;
+    for (int i=0; i<n; i++){
+        cout << vec[i] << flush;
+        if (i < n-1){
+            cout << ", " << flush;
+        }
+    }
+    cout << "]" << endl;
+}
+ 
+void InsertionSort(int A[], int n){
+    for (int i=1; i<n; i++){
+        int j = i-1;
+        int x = A[i];
+        while (j>-1 && A[j] > x){
+            A[j+1] = A[j];
+            j--;
+        }
+        A[j+1] = x;
     }
 }
-
-void Display(struct Node *p){
-    while (p != NULL){
-        printf("%d ", p->data);
-        p = p->next;
-    }
-}
-
-int count(struct Node *p){
-    int l=0;
-    while(p){
-        l++;
-        p= p->next;
-    }
-    return 1;
-}
-
-void Insert(struct Node *p, int index, int x){
-    struct Node *t;
-    int i;
-    if (index < 0 || index > count(p))
-        return;
-    t = (struct Node *)malloc(sizeof(struct Node));
-    t->data = x;
-    if (index == 0){
-        t->next = first;
-        first = t;
-    }
-    else{
-        for (i = 0; i < index - 1; i++)
-            p = p->next;
-        t->next = p->next;
-        p->next = t;
-    }
-}
-
-int main(){
-    int A[] = {10, 20, 30, 40, 50};
-    create(A, 5);
-    Insert(first, 0, 5);
-    Display(first);
+ 
+int main() {
+ 
+    int A[] = {19, 17, 15, 13, 11, 9, 7, 5, 3, 1};
+    Print(A, sizeof(A)/sizeof(A[0]), "       A");
+ 
+    InsertionSort(A, sizeof(A)/sizeof(A[0]));
+    Print(A, sizeof(A)/sizeof(A[0]), "Sorted A");
+ 
     return 0;
 }
+
