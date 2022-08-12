@@ -1,38 +1,59 @@
-#include <stdio.h>
+#include <iostream>
+#include <vector>
 
-struct Array{
-    int A[10];
-    int size;
-    int length;
-};
-
-void Display(struct Array arr){
-    int i;
-    printf("\nElements are\n");
-    for (i = 0; i < arr.length; i++)
-        printf("%d ", arr.A[i]);
-}
-
-void Append(struct Array *arr, int x){
-    if (arr->length < arr->size)
-        arr->A[arr->length++] = x;
-}
-
-void Insert(struct Array *arr, int index, int x){
-    int i;
-    if (index >= 0 && index <= arr->length){
-        for (i = arr->length; i > index; i--)
-            arr->A[i] = arr->A[i - 1];
-        arr->A[index] = x;
-        arr->length++;
+using namespace std;
+ 
+// Lecture based
+void InsertA(int A[], int n){
+    int i = n;
+    int temp = A[n];
+    while (i > 0 && temp > A[i % 2 == 0 ? (i/2)-1 : i/2]){
+        A[i] = A[i % 2 == 0 ? (i/2)-1 : i/2];
+        i = i % 2 == 0 ? (i/2)-1 : i/2;
     }
+    A[i] = temp;
 }
-
-int main(){
-    struct Array arr1 = {{2, 3, 4, 5, 6}, 10, 5};
-    Append(&arr1, 10);
-    Insert(&arr1, 0, 12);
-    Display(arr1);
+ 
+// STL vector based
+void Insert(vector<int>& vec, int key){
+    // Insert key at the end
+    auto i = vec.size();
+    vec.emplace_back(key);
+ 
+    // Rearrange elements: Indices are not DRY :-(
+    while (i > 0 && key > vec[i % 2 == 0 ? (i/2)-1 : i/2]){
+        vec[i] = vec[i % 2 == 0 ? (i/2)-1 : i/2];
+        i = i % 2 == 0 ? (i/2)-1 : i/2;
+    }
+    vec[i] = key;
+}
+ 
+template <class T>
+void Print(T& vec, int n){
+    cout << "Max Heap: [" << flush;
+    for (int i=0; i<n; i++){
+        cout << vec[i] << flush;
+        if (i < n-1){
+            cout << ", " << flush;
+        }
+    }
+    cout << "]" << endl;
+} 
+ 
+int main() {
+    int a[] = {45, 35, 15, 30, 10, 12, 6, 5, 20, 50};
+    InsertA(a, 9);
+    Print(a, sizeof(a)/sizeof(a[0]));
+    cout << endl;
+ 
+    // STL based
+    vector<int> v = {45, 35, 15, 30, 10, 12, 6, 5, 20};
+    Print(v, v.size());
+    v.reserve(15);  // Reserve space for 15 elements
+ 
+    Insert(v, 50);
+    Print(v, v.size());
+ 
     return 0;
 }
 
