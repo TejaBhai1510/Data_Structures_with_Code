@@ -1,54 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-struct Node{
+struct Term{
     int coeff;
     int exp;
-    struct Node *next;
-} *poly = NULL;
+};
 
-void create(){
-    struct Node *t, *last = NULL;
-    int num, i;
-    printf("Enter number of terms: ");
-    scanf("%d", &num);
-    printf("Enter each term with coeff and exp:\n");
-    for (i = 0; i < num; i++){
-        t = (struct Node *)malloc(sizeof(struct Node));
-        scanf("%d with Variable raised to %d", &t->coeff, &t->exp);
-        t->next = NULL;
-        if (poly == NULL){
-            poly = last = t;
-        }
-        else{
-            last->next = t;
-            last = t;
-        }
-    }
+struct Poly{
+    int n;
+    struct Term *terms;
+};
+
+void create(struct Poly *p){
+    int i;
+    printf("Number of terms?");
+    scanf("%d", &p->n);
+    p->terms = (struct Term *)malloc(p->n * sizeof(struct Term));
+    printf("Enter terms\n");
+    for (i = 0; i < p->n; i++)
+        scanf("%d%d", &p->terms[i].coeff, &p -> terms[i].exp);
 }
 
-void Display(struct Node *p){
-    while (p){
-        printf("%dx^(%d) +", p->coeff, p->exp);
-        p = p->next;
-    }
+void display(struct Poly p){
+    int i;
+    for (i = 0; i < p.n; i++)
+        printf("%dx%d+", p.terms[i].coeff, p.terms[i].exp);
     printf("\n");
 }
 
-long Eval(struct Node *p, int x){
-    long val = 0;
-    while (p){
-        val += p->coeff * pow(x, p->exp);
-        p = p->next;
+struct Poly *add(struct Poly *p1, struct Poly *p2){
+    int i, j, k;
+    struct Poly *sum;
+    sum = (struct Poly *)malloc(sizeof(struct Poly));
+    sum->terms = (struct Term *)malloc((p1->n + p2->n) *sizeof(struct Term));
+    i = j = k = 0;
+    while (i < p1->n && j < p2->n){
+        if (p1->terms[i].exp > p2->terms[j].exp)
+            sum->terms[k++] = p1->terms[i++];
+        else if (p1->terms[i].exp < p2->terms[j].exp)
+            sum->terms[k++] = p2->terms[j++];
+        else{
+            sum->terms[k].exp = p1->terms[i].exp;
+            sum->terms[k++].coeff = p1->terms[i++].coeff + p2->terms[j++].coeff;
+        }
     }
-    return val;
+    for (; i < p1->n; i++)
+        sum->terms[k++] = p1->terms[i];
+    for (; j < p2->n; j++)
+        sum->terms[k++] = p2->terms[j];
+    sum->n = k;
+    return sum;
 }
 
 int main(){
-    create();
-    Display(poly);
-    printf("%ld\n", Eval(poly, 1));
+    struct Poly p1, p2, *p3;
+    create(&p1);
+    create(&p2);
+    p3 = add(&p1, &p2);
+    printf("\n");
+    display(p1);
+    printf("\n");
+    display(p2);
+    printf("\n");
+    display(*p3);
     return 0;
 }
 
